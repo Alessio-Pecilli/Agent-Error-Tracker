@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+# Local event log and generated report (may contain project paths/commands)
+.claude/error-tracker/
+.claude/settings.local.json

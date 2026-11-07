@@ -1,0 +1,14 @@
+[project]
+name = "agent-error-tracker"
+version = "0.1.0"
+description = "Track recurring tool failures in Claude Code sessions via hooks and a Skill."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = [".claude/skills/error-tracker/scripts"]
