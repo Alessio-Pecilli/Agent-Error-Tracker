@@ -37,6 +37,8 @@ HINTS = {
 
 
 def default_log_path() -> Path:
+    if os.environ.get("AGENT_ERROR_TRACKER_LOG"):
+        return Path(os.environ["AGENT_ERROR_TRACKER_LOG"])
     root = os.environ.get("CLAUDE_PROJECT_DIR") or os.getcwd()
     return Path(root) / ".claude" / "error-tracker" / "events.jsonl"
 
