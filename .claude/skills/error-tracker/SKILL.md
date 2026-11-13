@@ -14,7 +14,7 @@ Produce a diagnostic report from the local tool-event log and summarize it for t
 1. Run the analyzer (pass `$ARGUMENTS` as the log path if the user gave one; otherwise it uses `.claude/error-tracker/events.jsonl` in the project):
 
    ```
-   python "${CLAUDE_SKILL_DIR}/scripts/analyzer.py" $ARGUMENTS
+   python "${CLAUDE_SKILL_DIR}/scripts/analyzer.py" --html $ARGUMENTS
    ```
 
    If `python` is not found, retry with `python3`.
@@ -28,7 +28,7 @@ Produce a diagnostic report from the local tool-event log and summarize it for t
    - The recurring errors, most frequent first, each with occurrences, tools, an example message and the operation that failed.
    - The tools with the most failures.
    - Suspected failures, clearly labelled as unconfirmed.
-   - The report path, so the user can open the full file.
+   - The report paths: the Markdown file and the HTML page ("HTML report written to ..."), which the user can open in a browser for a visual version.
 
 ## Rules
 

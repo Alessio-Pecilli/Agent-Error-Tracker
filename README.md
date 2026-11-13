@@ -24,6 +24,7 @@ Claude Code tool call
 |---|---|
 | `.claude/skills/error-tracker/scripts/capture.py` | Hook. Reads the hook JSON from stdin, writes one compact, redacted record per tool call. |
 | `.claude/skills/error-tracker/scripts/analyzer.py` | Loads the log, deduplicates, classifies and groups failures, renders the report. Also a CLI. |
+| `.claude/skills/error-tracker/scripts/html_report.py` | Optional visual report (`--html`): a single self-contained HTML page, offline, light/dark theme. |
 | `.claude/skills/error-tracker/SKILL.md` | The `/error-tracker` Skill: runs the analyzer, reads the report, presents the results. |
 | `.claude/settings.json` | Hook registration for this project. |
 | `examples/` | A reproducible sample session and the report generated from it. |
@@ -52,7 +53,7 @@ One JSON object per line:
 | `target` | What the tool acted on: the shell command, the file path, the search pattern, the URL without its query string, or the tool name. File contents are never stored. |
 | `ok` | `false` only for `PostToolUseFailure`, which marks a certain failure. |
 | `error` | Redacted error text. Only the first line and the tail are kept, up to 2,000 characters. |
-| `output_tail` | For successful shell commands only: the redacted tail of stderr. It is used to detect suspected failures. |
+| `output_tail` | For successful shell commands only: the redacted tail of stderr, plus stdout when it looks like an error (Claude Code can merge stderr into stdout). It is used to detect suspected failures. |
 
 **Redaction**: Bearer tokens, `key=value` / `key: value` pairs for keys such as token, secret, password, api_key and authorization, `--password`-style flags, credentials in URLs, and well-known token formats (`sk-…`, `ghp_…`, `github_pat_…`, `AKIA…`, `xox…-`). This is pattern-based, so it is best effort. The log is git-ignored and stays on your machine.
 
@@ -60,7 +61,7 @@ One JSON object per line:
 
 - **Total operations**: unique `tool_use_id`s. If the same call is logged twice, it is counted once, and the failure record wins.
 - **Certain failures**: events reported by the `PostToolUseFailure` hook.
-- **Suspected failures**: calls that reported success but whose stderr contains a traceback, an `…Error`/`…Exception`, `FAILED`, `fatal:` or a timeout. They are listed separately and never counted in the failure rate.
+- **Suspected failures**: calls that reported success but whose output contains a traceback, an `…Error`/`…Exception`, `FAILED`, `fatal:` or a timeout. They are listed separately and never counted in the failure rate.
 - **Grouping**: failures are grouped by signature, using the first rule that matches:
   1. The interrupt flag gives `Interrupted`.
   2. Otherwise, the *last* exception name in the text, which is the root cause in a traceback. For example `ModuleNotFoundError`.
@@ -103,15 +104,20 @@ Or run the analyzer directly:
 ```bash
 python .claude/skills/error-tracker/scripts/analyzer.py                       # default project log
 python .claude/skills/error-tracker/scripts/analyzer.py path/to/events.jsonl -o report.md
+python .claude/skills/error-tracker/scripts/analyzer.py --html                # also writes report.html
 ```
+
+`--html` writes a self-contained page next to the Markdown report. Open it in any browser: no server, no external assets. `/error-tracker` always generates it. See [`examples/sample-report.html`](examples/sample-report.html).
 
 Set `AGENT_ERROR_TRACKER_LOG` to use a different log path, for both the hook and the analyzer.
 
 ## Demo in one minute
 
 ```bash
-python .claude/skills/error-tracker/scripts/analyzer.py examples/sample-session.jsonl -o examples/sample-report.md
+python .claude/skills/error-tracker/scripts/analyzer.py examples/sample-session.jsonl -o examples/sample-report.md --html
 ```
+
+Then open `examples/sample-report.html` in a browser.
 
 The sample session has six operations:
 
