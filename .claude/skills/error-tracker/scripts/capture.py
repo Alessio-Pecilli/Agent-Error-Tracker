@@ -14,6 +14,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import urlsplit
 
+from analyzer import SUSPECT_RE
+
 MAX_TARGET = 200
 MAX_TEXT = 2000
 
@@ -74,9 +76,13 @@ def build_record(payload: dict) -> dict:
         rec["is_interrupt"] = bool(payload.get("is_interrupt"))
     else:
         resp = payload.get("tool_response")
-        # Successful shell commands can still print errors on stderr: keep the tail for "suspected" analysis.
-        if isinstance(resp, dict) and resp.get("stderr"):
-            rec["output_tail"] = clip(redact(str(resp["stderr"])), 500)
+        # Successful shell commands can still print errors: keep the tail for "suspected" analysis.
+        # Claude Code may merge stderr into stdout, so stdout is kept too, but only when it looks like an error.
+        if isinstance(resp, dict):
+            out, err = str(resp.get("stdout") or ""), str(resp.get("stderr") or "")
+            text = "\n".join(p for p in (out if SUSPECT_RE.search(out) else "", err) if p)
+            if text:
+                rec["output_tail"] = clip(redact(text), 500)
     return rec
 
 

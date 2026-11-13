@@ -191,6 +191,7 @@ def main(argv: list[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("log", nargs="?", type=Path, default=None, help="events JSONL file")
     p.add_argument("-o", "--output", type=Path, default=None, help="report path (default: report.md next to the log)")
+    p.add_argument("--html", action="store_true", help="also write a self-contained HTML report next to the Markdown one")
     args = p.parse_args(argv)
 
     log = args.log or default_log_path()
@@ -205,6 +206,12 @@ def main(argv: list[str] | None = None) -> int:
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(report, encoding="utf-8")
     print(f"Report written to {out}")
+    if args.html:
+        from html_report import render_html  # local import: avoids a circular import at module load
+
+        html_out = out.with_suffix(".html")
+        html_out.write_text(render_html(stats, str(log), bad), encoding="utf-8")
+        print(f"HTML report written to {html_out.resolve()}")
     print(f"Operations: {stats['total']}  Failures: {stats['failures']}  "
           f"Failure rate: {stats['failure_rate']:.0f}%  Suspected: {len(stats['suspected'])}")
     return 0

@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Agent Error Tracker Report</title><style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#14161f;--muted:#646b7d;--line:#e4e7ef;--accent:#4f46e5;
+--fail:#e5484d;--fail-soft:#fdecec;--ok:#2f9e6e;--ok-soft:#e7f6ef;--warn:#c27c0e;--warn-soft:#fdf3e1;--code:#f0f2f7}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1016;--card:#171a23;--ink:#eceef4;--muted:#9aa1b2;--line:#272b38;
+--accent:#8b85ff;--fail:#ff6b6f;--fail-soft:#3a1c1f;--ok:#4cc38a;--ok-soft:#15302a;--warn:#f0b04a;--warn-soft:#352a14;--code:#1f2330}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+main{max-width:1040px;margin:0 auto;padding:40px 20px 64px}
+header{display:flex;align-items:center;gap:14px;margin-bottom:28px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--accent);display:grid;place-items:center;color:#fff;flex:none}
+h1{font-size:24px;margin:0;letter-spacing:-.01em}
+.sub{color:var(--muted);font-size:13px;word-break:break-all}
+h2{font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:36px 0 14px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.kpi .label{color:var(--muted);font-size:13px}
+.kpi .value{font-size:34px;font-weight:700;letter-spacing:-.02em;margin-top:2px;font-variant-numeric:tabular-nums}
+.kpi.fail .value{color:var(--fail)}.kpi.warn .value{color:var(--warn)}
+.meter{height:8px;border-radius:99px;background:var(--ok-soft);overflow:hidden;margin-top:10px}
+.meter>span{display:block;height:100%;background:var(--fail);border-radius:99px}
+.err{display:grid;grid-template-columns:72px 1fr;gap:18px;margin-bottom:12px}
+.count{background:var(--fail-soft);color:var(--fail);border-radius:12px;display:grid;place-items:center;text-align:center;
+font-weight:700;font-size:28px;line-height:1.1;padding:10px 0;align-self:start}
+.count small{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+.err h3{margin:0 0 6px;font-size:18px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.chip{font:12px/1 ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--code);border:1px solid var(--line);
+border-radius:99px;padding:5px 9px;color:var(--ink)}
+.share{height:6px;border-radius:99px;background:var(--line);overflow:hidden;margin:6px 0 12px}
+.share>span{display:block;height:100%;background:var(--fail)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:6px 14px;margin:0;font-size:14px}
+dt{color:var(--muted)}dd{margin:0;min-width:0}
+code{font:13px ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--code);border-radius:6px;padding:2px 6px;
+word-break:break-word}
+.hint{margin-top:12px;padding:10px 12px;border-radius:10px;background:var(--ok-soft);font-size:14px}
+.hint.none{background:var(--code);color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.05em}
+th,td{padding:10px 8px;border-bottom:1px solid var(--line)}tr:last-child td{border-bottom:0}
+td.num{text-align:right;font-variant-numeric:tabular-nums;width:90px}
+.stack{display:flex;height:8px;border-radius:99px;overflow:hidden;background:var(--line);min-width:120px}
+.stack .f{background:var(--fail)}.stack .o{background:var(--ok)}
+.sus{border-left:4px solid var(--warn);background:var(--warn-soft);border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.empty{color:var(--muted);text-align:center;padding:28px}
+.note{color:var(--warn);font-size:14px;margin-top:12px}
+footer{color:var(--muted);font-size:12px;margin-top:40px;text-align:center}
+@media (max-width:560px){.err{grid-template-columns:1fr}.count{grid-auto-flow:column;gap:8px;padding:8px 14px;justify-self:start}}
+</style></head>
+<body><main>
+<header><div class="logo"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 9v4M12 17h.01"/><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></div><div><h1>Agent Error Tracker</h1>
+<div class="sub">Source: examples\sample-session.jsonl · 1 session(s) · generated 2026-11-13 18:47</div></div></header>
+<section class="kpis"><div class="card kpi"><div class="label">Operations observed</div><div class="value">6</div></div><div class="card kpi fail"><div class="label">Failures (certain)</div><div class="value">3</div></div><div class="card kpi"><div class="label">Failure rate</div><div class="value">50%</div><div class="meter" role="img" aria-label="50% failed"><span style="width:50.0%"></span></div></div><div class="card kpi"><div class="label">Suspected failures</div><div class="value">0</div></div></section>
+<h2>Recurring errors</h2><article class="card err"><div class="count">2<small>times</small></div><div><h3>ModuleNotFoundError <span class="chip">Bash</span></h3><div class="share" title="67% of failures"><span style="width:66.7%"></span></div><dl><dt>Message</dt><dd><code>E   ModuleNotFoundError: No module named &#x27;requests&#x27;</code></dd><dt>Operation</dt><dd><code>pytest tests/</code> <code>pytest tests/ -x</code></dd><dt>Seen</dt><dd>2026-11-12T10:00:01Z → 2026-11-12T10:00:40Z</dd></dl><div class="hint"><strong>Typical cause:</strong> A Python module is not importable: missing dependency, wrong virtualenv, or wrong working directory / PYTHONPATH.</div></div></article><article class="card err"><div class="count">1<small>time</small></div><div><h3>MCP Timeout <span class="chip">mcp__docs__search</span></h3><div class="share" title="33% of failures"><span style="width:33.3%"></span></div><dl><dt>Message</dt><dd><code>MCP error -32001: Request timed out</code></dd><dt>Operation</dt><dd><code>mcp__docs__search</code></dd><dt>Seen</dt><dd>2026-11-12T10:01:30Z</dd></dl><div class="hint"><strong>Typical cause:</strong> The operation exceeded its time limit: slow or unreachable service, or a command waiting for input.</div></div></article>
+<h2>Tools involved</h2><div class="card"><table><thead><tr><th>Tool</th><th class="num">Ops</th><th class="num">Failed</th><th>Ratio</th></tr></thead><tbody><tr><td><span class="chip">Bash</span></td><td class="num">4</td><td class="num">2</td><td><div class="stack" title="2 failed / 2 ok"><span class="f" style="width:50.0%"></span><span class="o" style="width:50.0%"></span></div></td></tr><tr><td><span class="chip">mcp__docs__search</span></td><td class="num">1</td><td class="num">1</td><td><div class="stack" title="1 failed / 0 ok"><span class="f" style="width:100.0%"></span><span class="o" style="width:0.0%"></span></div></td></tr><tr><td><span class="chip">Read</span></td><td class="num">1</td><td class="num">0</td><td><div class="stack" title="0 failed / 1 ok"><span class="f" style="width:0.0%"></span><span class="o" style="width:100.0%"></span></div></td></tr></tbody></table></div>
+
+<footer>Generated locally by Agent Error Tracker · statistics come only from recorded hook events</footer>
+</main></body></html>

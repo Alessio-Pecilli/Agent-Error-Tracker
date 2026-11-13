@@ -88,3 +88,22 @@ def test_cli_writes_report(tmp_path):
     out = tmp_path / "r.md"
     assert analyzer.main([str(SAMPLE), "-o", str(out)]) == 0
     assert out.read_text(encoding="utf-8").startswith("# Agent Error Tracker Report")
+
+
+def test_html_report(tmp_path):
+    import html_report
+
+    events, _ = analyzer.load_events(SAMPLE)
+    events.append({"tool": "Bash", "ok": False, "target": "<script>x</script>", "error": "weird <b>"})
+    page = html_report.render_html(analyzer.analyze(events))
+    assert page.startswith("<!doctype html>")
+    assert ">7</div>" in page and ">4</div>" in page  # operations, failures
+    assert "ModuleNotFoundError" in page and "MCP Timeout" in page
+    assert "<script>x" not in page and "&lt;script&gt;" in page  # escaped
+    assert "Not enough information" in page
+
+
+def test_cli_html_flag(tmp_path):
+    out = tmp_path / "r.md"
+    assert analyzer.main([str(SAMPLE), "-o", str(out), "--html"]) == 0
+    assert (tmp_path / "r.html").read_text(encoding="utf-8").startswith("<!doctype html>")
